@@ -1,162 +1,94 @@
-{# Life in Weeks Template #}
-{% macro new_row() %}
-    </div>
-    <div class="week-row">
-{% endmacro %}
-
-{% macro render_box(button_class, data_date, data_title, label='') %}
-<button type="button" 
-        class="{{ button_class }}"
-        data-date="{{ data_date }}"
-        data-bs-toggle="tooltip"
-        data-bs-placement="top"
-        title="{{ data_title }}">
-    {{ label }}
-</button>
-{% endmacro %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My Life in Weeks</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .container {
-            max-width: 1400px;
+        .life-in-weeks {
             margin: 0 auto;
+            padding: 20px;
         }
-        .year-container {
+        
+        .weeks-container {
+            width: 800px;
+            margin: 0 auto;
             display: flex;
-            flex-direction: column;
-            gap: 2px;
-            margin-bottom: 10px;
-        }
-        .week-row {
-            display: flex;
-            gap: 2px;
             flex-wrap: wrap;
+            gap: 2px;
+            padding: 10px;
         }
+
         .btn {
-            width: 20px;
-            height: 20px;
-            padding: 0;
-            margin: 0;
-            font-size: 0.7rem;
-            line-height: 1;
-            border-radius: 3px;
-            flex-shrink: 0;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+            margin: 1px;
+            padding: 2px 4px;
+            font-size: 0.8rem;
         }
+        
+        .btn.week:not(.text-nowrap) {
+            width: 30px;
+            height: 30px;
+        }
+
         .week {
             border: 1px solid #ccc;
         }
-        .birthday {
-            font-weight: bold;
-            width: auto;
-            padding: 0 4px;
+
+        .text-nowrap {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .event-button {
-            width: auto;
-            padding: 0 4px;
-        }
+
         {% for color in colors %}
-        .{{ color.class_name }} {
-            background-color: {{ color.bg_color }};
+        .{{ color.class_name }}, 
+        .{{ color.class_name }}:active, 
+        .{{ color.class_name }}.focus {
             border-color: {{ color.border_color }};
+            background-color: {{ color.bg_color }};
             color: {{ color.text_color }};
         }
         {% endfor %}
-        
-        /* Tooltip customization */
-        .tooltip-inner {
-            max-width: 300px;
+
+        .custom-tooltip {
+            --bs-tooltip-bg: rgba(0, 0, 0, 0.9);
+            --bs-tooltip-max-width: 300px;
+            --bs-tooltip-padding-x: 12px;
+            --bs-tooltip-padding-y: 8px;
             text-align: left;
-            padding: 8px;
-            background-color: rgba(0,0,0,0.9);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        {% set current_decade = -1 %}
-        {% for year in range(start_year, end_year + 1) %}
-            {% set age = year - start_year %}
-            
-            {# Start new decade #}
-            {% if age != 0 and age % 10 == 0 %}
-                {% if current_decade >= 0 %}
-                    </div>
-                {% endif %}
-                <h3 class="mt-4">Decade {{ age // 10 }}</h3>
-                <div class="year-container" id="decade-{{ age }}">
-                {% set current_decade = age // 10 %}
-            {% endif %}
-
-            <div class="week-row">
-                {# Year label #}
-                <span class="year-label me-2">{{ year }}</span>
-                
-                {# Birthday box #}
-                {% if age >= 0 %}
-                    {% set birthday_date = "%d-%02d-%02d"|format(year, start_month, start_day) %}
-                    {% set birthday_label = "🎂 %d"|format(age) %}
-                    {{ render_box(
-                        "btn birthday " ~ based_class ~ " " ~ doing_class,
-                        birthday_date,
-                        "%s – Turned %d year%s old"|format(
-                            birthday_date|strftime("%b %-d, %Y"),
-                            age,
-                            "s" if age != 1 else ""
-                        ),
-                        birthday_label
-                    ) }}
-                {% endif %}
-
-                {# Weeks #}
-                {% for week in range(52) %}
-                    {% set week_date = (year|string + "-" + start_month|string + "-" + start_day|string)|to_datetime + timedelta(weeks=week) %}
-                    
-                    {# Regular week box #}
-                    {{ render_box(
-                        "btn week " ~ based_class ~ " " ~ doing_class,
-                        week_date|strftime("%Y-%m-%d"),
-                        week_date|strftime("%b %-d, %Y") ~ " – " ~ doing ~
-                        (", " ~ association if association else "") ~
-                        ", based in " ~ based,
-                        ""
-                    ) }}
-
-                    {# Event boxes #}
-                    {% for day in range(7) %}
-                        {% set specific_date = week_date + timedelta(days=day) %}
-                        {% set date_str = specific_date|strftime("%Y-%m-%d") %}
-                        {% if date_str in events %}
-                            {% for event in events[date_str] %}
-                                {% if event.based %}
-                                    {% set based = event.based %}
-                                    {% set based_class = event.based|lower|replace(" ", "-") %}
-                                {% endif %}
-                                {% if event.doing %}
-                                    {% set doing = event.doing %}
-                                    {% set doing_class = event.doing|lower|replace(" ", "-") %}
-                                {% endif %}
-
-                                {{ render_box(
-                                    "btn event-button " ~ based_class ~ " " ~ doing_class,
-                                    date_str,
-                                    specific_date|strftime("%b %-d, %Y") ~ " – " ~ event.description,
-                                    event.headline
-                                ) }}
-                            {% endfor %}
-                        {% endif %}
+    <div class="life-in-weeks">
+        <h1 class="text-center mb-4">My Life in Weeks</h1>
+        
+        <div class="weeks-container">
+            {% for week in weeks %}
+                {% if week.events %}
+                    {% for event in week.events %}
+                        <button type="button" 
+                                class="btn week {{ event.based|lower|replace(' ', '-') }} {{ event.doing|lower|replace(' ', '-') }} text-nowrap text-left"
+                                data-date="{{ week.start_date|strftime('%Y-%m-%d') }}"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
+                                data-bs-custom-class="custom-tooltip"
+                                data-bs-title="{{ event.date|strftime('%b %-d, %Y') }} – {{ event.description }}">
+                            {{ event.headline }}
+                        </button>
                     {% endfor %}
-                {% endfor %}
-            </div>
-        {% endfor %}
+                {% else %}
+                    <button type="button" 
+                            class="btn week {{ based_class }} {{ doing_class }}"
+                            data-date="{{ week.start_date|strftime('%Y-%m-%d') }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="top"
+                            data-bs-custom-class="custom-tooltip"
+                            data-bs-title="{{ week.start_date|strftime('%b %-d, %Y') }} – {{ doing }}{{ ', ' + association if association }}, based in {{ based }}">
+                    </button>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
 
@@ -165,11 +97,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
             var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl, {
-                    html: true,
-                    container: 'body'
-                })
-            })
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
         });
     </script>
 </body>
