@@ -82,7 +82,7 @@ class LifeWeeksGenerator:
                 events.append(
                     Event(
                         date=birthday,
-                        headline=f"🎂 {age}",
+                        headline=f"🎂 {age} in {year}",
                         description=f"Turned {age} year{'s' if age != 1 else ''} old",
                         based=(
                             events[0].based if events else "Unknown"
