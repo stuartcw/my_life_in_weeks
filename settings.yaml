@@ -1,0 +1,38 @@
+start_date: "1967-01-01"
+end_year: 2025
+
+# Location-based styles
+locations:
+  - name: "UK"
+    class_name: "uk"
+    bg_color: "white"
+    border_color: "#8eb2d6"
+    start_date: "1967-01-01"
+    end_date: "1987-12-31"
+  - name: "Japan"
+    class_name: "japan"
+    bg_color: "white"
+    border_color: "#FCC737"
+    start_date: "1988-01-01"
+    end_date: null  # null means until present
+
+# Activity-based styles
+activities:
+  - name: "Child"
+    class_name: "child"
+    bg_color: "white"
+    border_color: "#469046"
+    start_date: "1967-01-01"
+    end_date: "1972-12-31"
+  - name: "Student"
+    class_name: "student"
+    bg_color: "#E8F9FF"
+    border_color: "#469046"
+    start_date: "1973-01-01"
+    end_date: "1987-12-31"
+  - name: "Working"
+    class_name: "working"
+    bg_color: "#F8E7F6"
+    border_color: "#469046"
+    start_date: "1988-01-01"
+    end_date: null
